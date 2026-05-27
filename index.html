@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Input Data SPG/BA</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="form-container">
+        <h2>Input Data SPG/BA GUARDIAN</h2>
+        <div style="text-align: center;">Aplikasi digunakan untuk input data SPG/BA di toko Guardian</div>
+        <form id="storeForm">
+            
+            <div class="input-group">
+                <label for="toko">Store Description</label>
+                <input type="text" id="toko" name="toko" placeholder="Memuat nama toko..." readonly required>
+            </div>
+
+        <div class="input-group">
+            <label for="brand">Brand</label>
+            <div class="custom-dropdown" id="brandDropdown">
+            <div class="dropdown-trigger" id="dropdownTrigger">
+            <span id="selectedBrand">-- Pilih Brand --</span>
+            <span class="arrow">▼</span>
+        </div>        
+        <div class="dropdown-menu" id="dropdownMenu">
+            <div class="search-box-container">
+                <input type="text" id="brandSearch" placeholder="Cari brand...">
+            </div>
+            <ul id="brandOptionsList">
+                </ul>
+            </div>
+            </div>    
+        <input type="hidden" id="brand" name="brand" required>
+            </div>
+
+            <div class="input-group">
+                <label for="jenis">Status (STAY/MOBILE)</label>
+                <select id="jenis" name="jenis" required>
+                    <option value="" disabled selected>-- Pilih Status --</option>
+                    <option value="STAY">STAY</option>
+                    <option value="MOBILE">MOBILE</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="nama">Nama Lengkap SPG/BA</label>
+                <input type="text" id="nama" name="nama" placeholder="Masukkan nama Lengkap Anda" required>
+            </div>
+
+            <div class="input-group">
+                <label for="email">Alamat Email SPG/BA</label>
+                <input type="email" id="email" name="email" placeholder="contoh@email.com" required>
+            </div>
+
+<form id="storeForm">
+    <button type="submit" id="btnSubmit">Kirim Data</button>
+    
+    <div id="responseMessage" class="message"></div>
+</form>
+        <div id="responseMessage" class="message"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
