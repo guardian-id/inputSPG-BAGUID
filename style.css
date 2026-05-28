@@ -206,3 +206,15 @@ button:disabled {
     cursor: default;
     background-color: transparent;
 }
+/* Style saat opsi list item di-klik/dipilih */
+#brandOptionsList li.selected {
+    background-color: #0d6efd; /* Warna biru khas atau sesuaikan */
+    color: white;
+    font-weight: bold;
+}
+
+/* Tetap berikan tanda checklist jika diperlukan */
+#brandOptionsList li.selected::after {
+    content: " ✓";
+    float: right;
+}
