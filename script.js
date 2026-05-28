@@ -10,43 +10,35 @@ document.addEventListener("DOMContentLoaded", function () {
     // =========================================================================
     const urlParams = new URLSearchParams(window.location.search);
     const namaToko = urlParams.get('store');
-    const tanggalAksesParam = urlParams.get('d'); // Mengambil parameter tanggal ?d=YYYY-MM-DD
+    const tanggalAksesParam = urlParams.get('d'); 
     const tokoInput = document.getElementById("toko");
     const form = document.getElementById("storeForm");
     const submitBtn = document.getElementById("btnSubmit");
     const responseMessage = document.getElementById("responseMessage");
 
-    // Dapatkan tanggal hari ini di komputer user/toko (Format: YYYY-MM-DD)
     const hariIni = new Date();
     const tahun = hariIni.getFullYear();
-    const bulan = String(hariIni.getMonth() + 1).padStart(2, '0'); // Bulan dimulai dari 0
+    const bulan = String(hariIni.getMonth() + 1).padStart(2, '0'); 
     const tanggal = String(hariIni.getDate()).padStart(2, '0');
-    const tanggalSekarangLokal = `${tahun}-${bulan}-${tanggal}`; // Hasilnya: "2026-05-27"
+    const tanggalSekarangLokal = `${tahun}-${bulan}-${tanggal}`; 
 
-    // Jalankan validasi tanggal akses harian awal
     if (!tanggalAksesParam) {
         blokirAplikasi("Akses Ditolak: Tautan tidak valid (Missing Security Token).");
         return; 
     } else if (tanggalAksesParam !== tanggalSekarangLokal) {
-        // Jika tanggal di link tidak sama dengan tanggal hari ini di komputer toko
         blokirAplikasi("Maaf, tautan akses ini sudah kedaluwarsa karena sudah berganti hari. Silakan minta tautan baru untuk hari ini.");
         return; 
     }
 
-    // --- LOGIKA KUNCI GABUNGAN BERBASIS DAFTAR (ARRAY) AGAR TIDAK SALING MENIMPA ---
     const currentSubmissionKey = `${tanggalAksesParam}|${namaToko}`;
-    
-    // Mengambil daftar semua kunci yang sudah pernah disubmit di device ini
     let submittedKeys = JSON.parse(localStorage.getItem('submittedKeys')) || [];
     
-    // Jika kunci kombinasi Tanggal + Toko ini sudah ada di dalam daftar memori HP
     if (submittedKeys.includes(currentSubmissionKey)) {
         blokirAplikasi("Terima kasih sudah submit! Akses update untuk toko ini pada tanggal hari ini telah ditutup.");
         responseMessage.className = "message success"; 
         return;
     }
 
-    // Set nama toko jika tanggalnya cocok
     if (namaToko) {
         tokoInput.value = decodeURIComponent(namaToko);
     } else {
@@ -63,6 +55,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const brandSearch = document.getElementById("brandSearch");
     const brandOptionsList = document.getElementById("brandOptionsList");
     const validatorBrandInput = document.getElementById("brand");
+
+    // Array untuk menampung brand yang sedang dipilih
+    let selectedBrands = [];
 
     // Toggle Buka/Tutup Dropdown saat di-klik
     dropdownTrigger.addEventListener("click", function (e) {
@@ -83,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // =========================================================================
-    // 3. MEMUAT DATA BRAND DARI FILE CSV (brands.csv)
+    // 3. MEMUAT DATA BRAND DARI FILE CSV (brands.csv) DENGAN LOGIKA MULTI-SELECT
     // =========================================================================
     fetch('brands.csv')
         .then(response => {
@@ -101,12 +96,31 @@ document.addEventListener("DOMContentLoaded", function () {
                     li.textContent = brandName;
                     li.setAttribute("data-value", brandName);
                     
+                    // Event listener diubah agar mendukung Multi-Select
                     li.addEventListener("click", function (e) {
-                        e.stopPropagation();
+                        e.stopPropagation(); // Mencegah dropdown tertutup
+                        
                         const valueTerpilih = this.getAttribute("data-value");
-                        selectedBrandText.textContent = valueTerpilih; 
-                        validatorBrandInput.value = valueTerpilih;      
-                        brandDropdown.classList.remove("active");      
+                        
+                        // Cek apakah brand sudah dipilih sebelumnya
+                        if (selectedBrands.includes(valueTerpilih)) {
+                            // Jika sudah ada, hapus dari list (Uncheck)
+                            selectedBrands = selectedBrands.filter(item => item !== valueTerpilih);
+                            this.classList.remove("selected"); // Hapus class styling aktif
+                        } else {
+                            // Jika belum ada, tambahkan ke list (Check)
+                            selectedBrands.push(valueTerpilih);
+                            this.classList.add("selected"); // Tambah class styling aktif
+                        }
+
+                        // Update Tampilan Text di Trigger & Input Validator
+                        if (selectedBrands.length > 0) {
+                            selectedBrandText.textContent = selectedBrands.join(", ");
+                            validatorBrandInput.value = selectedBrands.join(", "); // Otomatis format "Brand1, Brand2"
+                        } else {
+                            selectedBrandText.textContent = "Pilih Brand...";
+                            validatorBrandInput.value = "";
+                        }
                     });
                     
                     brandOptionsList.appendChild(li);
@@ -155,20 +169,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // =========================================================================
-    // 5. LOGIKA SUBMIT FORM (DENGAN CEK VALIDASI DROPDOWN BLANK)
+    // 5. LOGIKA SUBMIT FORM (DATA BRAND SUDAH OTOMATIS BERFORMAT BRAND1, BRAND2)
     // =========================================================================
     form.addEventListener("submit", function (e) {
         e.preventDefault(); 
 
-        // --- VALIDASI CEK DROPDOWN BRAND WAJIB DIISI ---
         const brandValue = validatorBrandInput.value.trim();
         if (!brandValue || brandValue === "" || brandValue === "Pilih Brand...") {
-            showStatus("Gagal kirim! Silakan pilih salah satu Brand terlebih dahulu.", "error");
-            
-            // Goyangkan visual dropdown jika ada style error (opsional) atau buka otomatis dropdown-nya
+            showStatus("Gagal kirim! Silakan pilih minimal satu Brand terlebih dahulu.", "error");
             brandDropdown.classList.add("active");
             brandSearch.focus();
-            return; // Gagalkan submit ke Power Automate
+            return; 
         }
 
         submitBtn.disabled = true;
@@ -177,7 +188,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const payload = {
             toko: document.getElementById("toko").value,
-            brand: brandValue,
+            brand: brandValue, // Di Power Automate akan terbaca sebagai text biasa: "BrandA, BrandB, BrandC"
             jenis: document.getElementById("jenis").value, 
             nama: document.getElementById("nama").value,
             email: document.getElementById("email").value,
@@ -205,7 +216,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         })
         .then(data => {
-            // Memasukkan kunci baru ke dalam daftar Array tanpa menghapus data toko lain
             let submittedKeys = JSON.parse(localStorage.getItem('submittedKeys')) || [];
             if (!submittedKeys.includes(currentSubmissionKey)) {
                 submittedKeys.push(currentSubmissionKey);
@@ -214,7 +224,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             showStatus(data.message || "Terima kasih sudah submit! Akses update untuk toko ini pada tanggal hari ini telah ditutup.", "success");
             
-            // Mengunci seluruh elemen input form & mengubah teks tombol utama
             const inputs = form.querySelectorAll("input, button, .dropdown-trigger, select");
             inputs.forEach(el => {
                 el.disabled = true;
