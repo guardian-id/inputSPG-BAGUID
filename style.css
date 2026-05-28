@@ -6,7 +6,13 @@
 }
 
 body {
-    background-color: hsl(210, 25%, 97%);
+    background-color: hsl(9, 67%, 85%);
+    /* Garis vertikal dan horizontal halus */
+    background-image: 
+        linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+    background-size: 24px 24px; /* Mengatur ukuran kotak grid */
+    
     display: flex;
     justify-content: center;
     align-items: center;
