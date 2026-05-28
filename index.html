@@ -12,30 +12,32 @@
         <h2>Input Data SPG&BA GUARDIAN</h2>
         <div style="text-align: center; color: #f8f7f7;">Aplikasi digunakan untuk input data SPG&BA</div>
         <div style="text-align: center; color: #f8f7f7;">Lengkapi formulir di bawah ini</div>
-        <p style="color: #f8f7f7; font-size: 14px;"><b>Formulir:</b></p>
+        
+        <p style="color: #f8f7f7; font-size: 14px; font-weight: bold; margin-top: 15px; margin-bottom: 5px;">Formulir:</p>
         <hr>
+        
         <form id="storeForm">
             <div class="input-group">
                 <label for="toko">Store Description</label>
                 <input type="text" id="toko" name="toko" placeholder="Memuat nama toko..." readonly required>
             </div>
 
-        <div class="input-group">
-            <label for="brand">Brand</label>
-            <div class="custom-dropdown" id="brandDropdown">
-            <div class="dropdown-trigger" id="dropdownTrigger">
-            <span id="selectedBrand">-- Pilih Brand --</span>
-            <span class="arrow">▼</span>
-        </div>        
-        <div class="dropdown-menu" id="dropdownMenu">
-            <div class="search-box-container">
-                <input type="text" id="brandSearch" placeholder="Cari brand...">
-            </div>
-            <ul id="brandOptionsList">
-                </ul>
-            </div>
-            </div>    
-        <input type="hidden" id="brand" name="brand" required>
+            <div class="input-group">
+                <label for="brand">Brand</label>
+                <div class="custom-dropdown" id="brandDropdown">
+                    <div class="dropdown-trigger" id="dropdownTrigger">
+                        <span id="selectedBrand">-- Pilih Brand --</span>
+                        <span class="arrow">▼</span>
+                    </div>        
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <div class="search-box-container">
+                            <input type="text" id="brandSearch" placeholder="Cari brand...">
+                        </div>
+                        <ul id="brandOptionsList">
+                            </ul>
+                    </div>
+                </div>    
+                <input type="hidden" id="brand" name="brand" required>
             </div>
 
             <div class="input-group">
@@ -57,12 +59,9 @@
                 <input type="email" id="email" name="email" placeholder="contoh@email.com" required>
             </div>
 
-<form id="storeForm">
-    <button type="submit" id="btnSubmit">Kirim Data</button>
-    
-    <div id="responseMessage" class="message"></div>
-</form>
-        <div id="responseMessage" class="message"></div>
+            <button type="submit" id="btnSubmit">Kirim Data</button>
+            <div id="responseMessage" class="message"></div>
+        </form>
     </div>
 
     <script src="script.js"></script>
