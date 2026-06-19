@@ -6,11 +6,30 @@ const POWER_APPS_WEBHOOK_URL = "https://default9ec0d6c58a25418fb3841c77c55584.c2
 document.addEventListener("DOMContentLoaded", function () {
     
     // =========================================================================
-    // 1. AMBIL INFORMASI URL & VALIDASI BATAS AKSES 1 HARI (SAMA TANGGAL & TOKO)
+    // 1. AMBIL INFORMASI URL & VALIDASI BATAS AKSES 1 HARI (DECODE BASE64)
     // =========================================================================
     const urlParams = new URLSearchParams(window.location.search);
-    const namaToko = urlParams.get('store');
-    const tanggalAksesParam = urlParams.get('d'); 
+    const encryptedParam = urlParams.get('q'); // Membaca parameter aman ?q=...
+    
+    let namaToko = null;
+    let tanggalAksesParam = null;
+
+    // Proses membongkar string Base64 kembali ke parameter asli jika ada
+    if (encryptedParam) {
+        try {
+            // Mengubah Base64 kembali menjadi teks biasa (store=xxxx&d=yyyy-mm-dd)
+            const decodedString = atob(encryptedParam);
+            const decodedParams = new URLSearchParams(decodedString);
+            
+            namaToko = decodedParams.get('store');
+            tanggalAksesParam = decodedParams.get('d');
+        } catch (e) {
+            console.error("Gagal membaca enkripsi URL:", e);
+            blokirAplikasi("Akses Ditolak: Tautan rusak atau format tidak valid.");
+            return;
+        }
+    }
+
     const tokoInput = document.getElementById("toko");
     const form = document.getElementById("storeForm");
     const submitBtn = document.getElementById("btnSubmit");
